@@ -73,7 +73,7 @@ class dialogutils {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           title: Text(title),
-          actions: actions, // هنا يتم إضافة القائمة إلى الـ AlertDialog
+          actions: actions,
         );
       },
     );

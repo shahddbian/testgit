@@ -10,7 +10,7 @@ class firebaseUtils {
         .withConverter<Task>(
             fromFirestore: ((snapshot, options) =>
                 Task.fromFireStore(snapshot.data()!)),
-            toFirestore: (task, options) => task.toFireStore());
+            toFirestore: (task, options) => task.toFirestore());
   }
 
   static Future<void> addTasktoFireStore(Task task, String uId) {
@@ -24,13 +24,17 @@ class firebaseUtils {
     return getTaskCollection(uId).doc(task.id).delete();
   }
 
+  static Future<void> editTaskFromFireStore(Task task, String uId) {
+    return getTaskCollection(uId).doc(task.id).update(task.toFirestore());
+  }
+
   static CollectionReference<Myuser> getUserCollection() {
     return FirebaseFirestore.instance
         .collection(Myuser.collectionName)
         .withConverter<Myuser>(
             fromFirestore: ((snapshot, options) =>
                 Myuser.Fromfirestore(snapshot.data()!)),
-            toFirestore: ((user, options) => user.tofiesStore()));
+            toFirestore: ((user, options) => user.toFireStore()));
   }
 
   static Future<void> addUsertofire(Myuser myuser) {

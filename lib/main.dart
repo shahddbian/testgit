@@ -14,14 +14,14 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: FirebaseOptions(
-              apiKey: 'AIzaSyBe3CegrZ0kzS6Cm4MKyghhKjf86Z38M78',
-              appId: 'com.example.todoapp',
-              messagingSenderId: '196395095519',
-              projectId: 'todo-app1-cb381'))
-      : await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: 'AIzaSyBe3CegrZ0kzS6Cm4MKyghhKjf86Z38M78',
+      appId: 'com.example.todoapp',
+      messagingSenderId: '196395095519',
+      projectId: 'todo-app1-cb381',
+    ),
+  );
 
   runApp(MultiProvider(
     providers: [
@@ -43,14 +43,14 @@ class MyApp extends StatelessWidget {
     var provider = Provider.of<AppConfigProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: registerscreen.routeName,
+      initialRoute: loginscreen.routeName,
       routes: {
         homescreen.routeName: (context) => homescreen(),
         registerscreen.routeName: (context) => registerscreen(),
         loginscreen.routeName: (context) => loginscreen(),
       },
-      theme: myThemedate.LightTheme,
-      darkTheme: myThemedate.DarkTheme,
+      theme: myThemedate.lightTheme,
+      darkTheme: myThemedate.darkTheme,
       themeMode: provider.appMode,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

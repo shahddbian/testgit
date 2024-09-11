@@ -4,15 +4,17 @@ import 'package:todoapp/provider/appconfigprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class themesheet extends StatefulWidget {
+class Themesheet extends StatefulWidget {
   @override
-  State<themesheet> createState() => _themesheetState();
+  State<Themesheet> createState() => _ThemesheetState();
 }
 
-class _themesheetState extends State<themesheet> {
+class _ThemesheetState extends State<Themesheet> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
+    var theme = Theme.of(context);
+
     return Container(
       margin: EdgeInsets.all(15),
       child: Column(
@@ -25,8 +27,10 @@ class _themesheetState extends State<themesheet> {
                 provider.changetheme(ThemeMode.light);
               },
               child: provider.appMode == ThemeMode.light
-                  ? getSelectedItemwidget(AppLocalizations.of(context)!.light)
-                  : getUnSelectedwidget(AppLocalizations.of(context)!.light),
+                  ? getSelectedItemwidget(
+                      AppLocalizations.of(context)!.light, theme)
+                  : getUnSelectedwidget(
+                      AppLocalizations.of(context)!.light, theme),
             ),
           ),
           Padding(
@@ -36,8 +40,10 @@ class _themesheetState extends State<themesheet> {
                 provider.changetheme(ThemeMode.dark);
               },
               child: provider.appMode == ThemeMode.dark
-                  ? getSelectedItemwidget(AppLocalizations.of(context)!.dark)
-                  : getUnSelectedwidget(AppLocalizations.of(context)!.dark),
+                  ? getSelectedItemwidget(
+                      AppLocalizations.of(context)!.dark, theme)
+                  : getUnSelectedwidget(
+                      AppLocalizations.of(context)!.dark, theme),
             ),
           )
         ],
@@ -45,15 +51,12 @@ class _themesheetState extends State<themesheet> {
     );
   }
 
-  Widget getSelectedItemwidget(String text) {
+  Widget getSelectedItemwidget(String text, ThemeData theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(text,
-            style: TextStyle(
-                    fontSize: 18,
-                    color: appcolors.blackColor,
-                    fontWeight: FontWeight.w400)
+            style: theme.textTheme.bodyMedium
                 ?.copyWith(color: appcolors.primaryColor)),
         Icon(
           Icons.check,
@@ -64,14 +67,10 @@ class _themesheetState extends State<themesheet> {
     );
   }
 
-  Widget getUnSelectedwidget(String text) {
+  Widget getUnSelectedwidget(String text, ThemeData theme) {
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 18,
-        color: appcolors.blackColor,
-        fontWeight: FontWeight.w400,
-      ),
+      style: theme.textTheme.bodyMedium,
     );
   }
 }

@@ -12,7 +12,7 @@ class Myuser {
       : this(
             id: data['id'] as String, name: data['name'], email: data['email']);
 
-  Map<String, dynamic> tofiesStore() {
+  Map<String, dynamic> toFireStore() {
     return {'id': id, 'email': email, 'name': name};
   }
 }
