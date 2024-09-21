@@ -3,12 +3,15 @@ import 'package:provider/provider.dart';
 import 'package:todoapp/appcolors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:todoapp/firsbaseutils.dart';
-
 import '../../model/task.dart';
 import '../../provider/listprovider.dart';
 import '../../provider/userprovider.dart';
 
 class AddBottomSheet extends StatefulWidget {
+  Task? task;
+
+  AddBottomSheet({this.task});
+
   @override
   State<AddBottomSheet> createState() => _AddBottomSheetState();
 }
@@ -17,17 +20,31 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   String title = '';
   String desc = '';
   var formKey = GlobalKey<FormState>();
-  var selecdate = DateTime.now();
+  DateTime selecdate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.task != null) {
+      title = widget.task!.title;
+      desc = widget.task!.description;
+      selecdate = widget.task!.dateTime;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
     return Container(
       margin: EdgeInsets.all(12),
       child: SingleChildScrollView(
         child: Column(
           children: [
             Text(
-              AppLocalizations.of(context)!.add_new_task,
+              widget.task != null
+                  ? AppLocalizations.of(context)!.edit_task
+                  : AppLocalizations.of(context)!.add_new_task,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -42,6 +59,8 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      initialValue: title,
+                      style: TextStyle(color: appcolors.darkbackColor),
                       onChanged: (text) {
                         title = text;
                       },
@@ -59,6 +78,8 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      initialValue: desc,
+                      style: TextStyle(color: appcolors.darkbackColor),
                       onChanged: (text) {
                         desc = text;
                       },
@@ -104,10 +125,12 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      addtask(context);
+                      addOrUpdateTask(context);
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.add,
+                      widget.task != null
+                          ? AppLocalizations.of(context)!.edit
+                          : AppLocalizations.of(context)!.add,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -124,41 +147,71 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
     );
   }
 
-  void addtask(BuildContext context) {
+  void addOrUpdateTask(BuildContext context) {
     if (formKey.currentState?.validate() == true) {
       var userProvider = Provider.of<Userprovider>(context, listen: false);
       var listProv = Provider.of<listprovider>(context, listen: false);
 
       Task task = Task(
+        id: widget.task?.id ?? '',
         title: title,
         dateTime: selecdate,
         description: desc,
+        isDone: widget.task?.isDone ?? false,
       );
 
-      firebaseUtils
-          .addTasktoFireStore(task, userProvider.currentUser!.id)
-          .then((value) {
-        print('Task Added Successfully');
-        listProv.getAllTasksfromFire(userProvider.currentUser!.id);
-        Navigator.pop(context); // قم بغلق الـ BottomSheet بعد إضافة المهمة
-      }).timeout(Duration(seconds: 1), onTimeout: () {
-        print('Task Added Successfully (Timeout)');
-        listProv.getAllTasksfromFire(userProvider.currentUser!.id);
-        Navigator.pop(context); // قم بغلق الـ BottomSheet بعد إضافة المهمة
-      });
+      if (widget.task == null) {
+        firebaseUtils
+            .addTasktoFireStore(task, userProvider.currentUser!.id)
+            .then((value) {
+          print('Task Added Successfully');
+          listProv.getAllTasksfromFire(userProvider.currentUser!.id);
+          Navigator.pop(context);
+        }).catchError((error) {
+          print('Error adding task: $error');
+        });
+      } else {
+        firebaseUtils
+            .editTaskFromFireStore(task, userProvider.currentUser!.id)
+            .then((value) {
+          print('Task Updated Successfully');
+          listProv.getAllTasksfromFire(userProvider.currentUser!.id);
+          Navigator.pop(context);
+        }).catchError((error) {
+          print('Error updating task: $error');
+        });
+      }
     }
   }
 
   void showCalender() async {
+    var theme = Theme.of(context);
     var chosenDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selecdate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            primaryColor: appcolors.primaryColor,
+            hintColor: appcolors.primaryColor,
+            textTheme: TextTheme(
+              headline4: TextStyle(
+                  color: theme.brightness == Brightness.dark
+                      ? appcolors.whiteColor
+                      : appcolors.blackColor),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (chosenDate != null) {
-      selecdate = chosenDate;
-      setState(() {});
+      setState(() {
+        selecdate = chosenDate;
+      });
     }
   }
 }
+

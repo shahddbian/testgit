@@ -8,6 +8,7 @@ import 'Settinslist/settingsTab.dart';
 import 'Tasklist/AddBottomSheet.dart';
 import 'Tasklist/tasklistTab.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 class homescreen extends StatefulWidget {
   static const String routeName = 'home screen';
@@ -23,19 +24,20 @@ class _homescreenState extends State<homescreen> {
   Widget build(BuildContext context) {
     var userProvider = Provider.of<Userprovider>(context);
     var listProvider = Provider.of<listprovider>(context);
+    var theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.15,
         title: Text(
             selectedIndex == 0
-                ? "${AppLocalizations.of(context)!.app_title}${userProvider.currentUser!.name}}"
+                ? "{${AppLocalizations.of(context)!.app_title}${userProvider.currentUser!.name}}"
                 : AppLocalizations.of(context)!.settings,
-            style: Theme.of(context).textTheme.bodyLarge),
+            style: theme.textTheme.bodyLarge),
         actions: [
           IconButton(
               onPressed: () {
                 listProvider.tasklist = [];
-
                 Navigator.of(context)
                     .pushReplacementNamed(loginscreen.routeName);
               },
@@ -43,21 +45,30 @@ class _homescreenState extends State<homescreen> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
+        color: theme.bottomAppBarTheme.color ??
+            (theme.brightness == Brightness.dark
+                ? appcolors.darkboxColor
+                : appcolors.backlightColor),
         shape: CircularNotchedRectangle(),
         notchMargin: 10,
         child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           currentIndex: selectedIndex,
           onTap: (index) {
-            selectedIndex = index;
-            setState(() {});
+            setState(() {
+              selectedIndex = index;
+            });
           },
           items: [
             BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage('assets/images/icon_list.png')),
-                label: AppLocalizations.of(context)!.task_list),
+              icon: ImageIcon(AssetImage('assets/images/icon_list.png')),
+              label: AppLocalizations.of(context)!.task_list,
+            ),
             BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage('assets/images/icon_settings.png')),
-                label: AppLocalizations.of(context)!.settings),
+              icon: ImageIcon(AssetImage('assets/images/icon_settings.png')),
+              label: AppLocalizations.of(context)!.settings,
+            ),
           ],
         ),
       ),

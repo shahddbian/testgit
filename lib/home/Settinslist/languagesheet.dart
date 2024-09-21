@@ -4,14 +4,12 @@ import 'package:todoapp/appcolors.dart';
 import 'package:todoapp/provider/appconfigprovider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class languagesheet extends StatefulWidget {
-  const languagesheet({super.key});
-
+class Languagesheet extends StatefulWidget {
   @override
-  State<languagesheet> createState() => _languagesheetState();
+  State<Languagesheet> createState() => _LanguagesheetState();
 }
 
-class _languagesheetState extends State<languagesheet> {
+class _LanguagesheetState extends State<Languagesheet> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
@@ -41,7 +39,7 @@ class _languagesheetState extends State<languagesheet> {
                   ? getSelectedItemwidget(AppLocalizations.of(context)!.arabic)
                   : getUnSelectedwidget(AppLocalizations.of(context)!.arabic),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -51,12 +49,13 @@ class _languagesheetState extends State<languagesheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(text,
-            style: TextStyle(
-                    fontSize: 18,
-                    color: appcolors.blackColor,
-                    fontWeight: FontWeight.w400)
-                ?.copyWith(color: appcolors.primaryColor)),
+        Text(
+          text,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: appcolors.primaryColor),
+        ),
         Icon(
           Icons.check,
           size: 30,
@@ -69,11 +68,203 @@ class _languagesheetState extends State<languagesheet> {
   Widget getUnSelectedwidget(String text) {
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 18,
-        color: appcolors.blackColor,
-        fontWeight: FontWeight.w400,
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+}
+
+class themesheet extends StatefulWidget {
+  @override
+  State<themesheet> createState() => _themesheetState();
+}
+
+class _themesheetState extends State<themesheet> {
+  @override
+  Widget build(BuildContext context) {
+    var provider = Provider.of<AppConfigProvider>(context);
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: InkWell(
+              onTap: () {
+                provider.changetheme(ThemeMode.light);
+              },
+              child: provider.appMode == ThemeMode.light
+                  ? getSelectedItemwidget(AppLocalizations.of(context)!.light)
+                  : getUnSelectedwidget(AppLocalizations.of(context)!.light),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: InkWell(
+              onTap: () {
+                provider.changetheme(ThemeMode.dark);
+              },
+              child: provider.appMode == ThemeMode.dark
+                  ? getSelectedItemwidget(AppLocalizations.of(context)!.dark)
+                  : getUnSelectedwidget(AppLocalizations.of(context)!.dark),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget getSelectedItemwidget(String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          text,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: appcolors.primaryColor),
+        ),
+        Icon(
+          Icons.check,
+          size: 30,
+          color: appcolors.primaryColor,
+        )
+      ],
+    );
+  }
+
+  Widget getUnSelectedwidget(String text) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+}
+
+class settingsTab extends StatefulWidget {
+  @override
+  State<settingsTab> createState() => _settingsTabState();
+}
+
+class _settingsTabState extends State<settingsTab> {
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var provider = Provider.of<AppConfigProvider>(context);
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.language,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.bold, fontSize: 22),
+          ),
+          SizedBox(
+            height: height * 0.02,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: appcolors.primaryColor, width: 2),
+            ),
+            child: InkWell(
+              onTap: () {
+                showlanguagesheet(context);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    provider.applanguage == 'en'
+                        ? AppLocalizations.of(context)!.english
+                        : AppLocalizations.of(context)!.arabic,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 22),
+                  ),
+                  Icon(Icons.arrow_drop_down,
+                      color: Theme.of(context).textTheme.bodyMedium?.color)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: height * 0.03,
+          ),
+          Text(
+            AppLocalizations.of(context)!.mode,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.bold, fontSize: 22),
+          ),
+          SizedBox(
+            height: height * 0.02,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: appcolors.primaryColor, width: 2),
+            ),
+            child: InkWell(
+              onTap: () {
+                showthemesheet();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    provider.appMode == ThemeMode.light
+                        ? AppLocalizations.of(context)!.light
+                        : AppLocalizations.of(context)!.dark,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 22),
+                  ),
+                  Icon(Icons.arrow_drop_down,
+                      color: Theme.of(context).textTheme.bodyMedium?.color)
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showlanguagesheet(BuildContext context) {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return Languagesheet();
+      },
+    );
+  }
+
+  void showthemesheet() {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return themesheet();
+      },
     );
   }
 }

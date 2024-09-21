@@ -3,19 +3,29 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/appcolors.dart';
 import 'package:todoapp/firsbaseutils.dart';
+import 'package:todoapp/home/Tasklist/AddBottomSheet.dart';
 import 'package:todoapp/provider/listprovider.dart';
-
 import '../../model/task.dart';
 import '../../provider/userprovider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:todoapp/dialogUtils.dart';
+import 'package:todoapp/home/homescreen.dart';
 
-class tasklistitem extends StatelessWidget {
-  Task task;
-
+class tasklistitem extends StatefulWidget {
+  final Task task;
   tasklistitem({required this.task});
 
   @override
+  State<tasklistitem> createState() => _tasklistitemState();
+}
+
+class _tasklistitemState extends State<tasklistitem> {
+  @override
   Widget build(BuildContext context) {
     var listProvider = Provider.of<listprovider>(context);
+    var userProvider = Provider.of<Userprovider>(context, listen: false);
+    var theme = Theme.of(context);
+
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
@@ -26,40 +36,40 @@ class tasklistitem extends StatelessWidget {
             SlidableAction(
               borderRadius: BorderRadius.circular(15),
               onPressed: (context) {
-                var userProvider =
-                    Provider.of<Userprovider>(context, listen: false);
                 firebaseUtils
-                    .deletetaskfromfire(task, userProvider.currentUser!.id)
-                    .then((value) {
-                  print('task deleted');
-                  listProvider
-                      .getAllTasksfromFire(userProvider.currentUser!.id);
-                }).timeout(Duration(seconds: 1), onTimeout: () {
-                  print('task deleted');
+                    .deletetaskfromfire(
+                        widget.task, userProvider.currentUser!.id)
+                    .then((_) {
                   listProvider
                       .getAllTasksfromFire(userProvider.currentUser!.id);
                 });
               },
               backgroundColor: appcolors.redColor,
-              foregroundColor: appcolors.whiteColor,
+              foregroundColor: theme.colorScheme.onError,
               icon: Icons.delete,
-              label: 'Delete',
+              label: AppLocalizations.of(context)!.delete,
             ),
             SlidableAction(
               borderRadius: BorderRadius.circular(15),
-              onPressed: (context) {},
+              onPressed: (context) {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => AddBottomSheet(task: widget.task),
+                );
+              },
               backgroundColor: appcolors.primaryColor,
-              foregroundColor: appcolors.whiteColor,
+              foregroundColor: theme.colorScheme.onPrimary,
               icon: Icons.edit,
-              label: 'Edit',
+              label: AppLocalizations.of(context)!.edit,
             ),
           ],
         ),
         child: Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-              color: appcolors.whiteColor,
-              borderRadius: BorderRadius.circular(25)),
+            color: theme.colorScheme.background,
+            borderRadius: BorderRadius.circular(25),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -67,30 +77,74 @@ class tasklistitem extends StatelessWidget {
                 margin: EdgeInsets.all(15),
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: 4,
-                color: appcolors.primaryColor,
+                color: widget.task.isDone
+                    ? appcolors.greenColor
+                    : appcolors.primaryColor,
               ),
               Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(task.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: appcolors.primaryColor)),
-                  Text(task.description,
-                      style: Theme.of(context).textTheme.bodyMedium),
-                ],
-              )),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: appcolors.primaryColor),
-                child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.check,
-                        size: 35, color: appcolors.whiteColor)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      widget.task.title,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    Text(
+                      widget.task.description,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: widget.task.isDone
+                      ? appcolors.greenColor
+                      : appcolors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    widget.task.isDone = !widget.task.isDone;
+
+                    if (widget.task.isDone) {
+                      firebaseUtils
+                          .editTaskFromFireStore(
+                              widget.task, userProvider.currentUser!.id)
+                          .then((_) {
+                        listProvider
+                            .getAllTasksfromFire(userProvider.currentUser!.id);
+                        dialogutils.showsms(
+                          context: context,
+                          content: 'Task completed successfully!',
+                          title: 'Success',
+                          postiveActionname: 'OK',
+                          posAction: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => homescreen(),
+                              ),
+                            );
+                          },
+                        );
+                      });
+                    }
+                  });
+                },
+                child: widget.task.isDone
+                    ? Text(
+                        "Done",
+                        style: TextStyle(
+                            color: theme.colorScheme.onPrimary, fontSize: 18),
+                      )
+                    : Icon(
+                        Icons.check,
+                        color: theme.colorScheme.onPrimary,
+                      ),
               ),
             ],
           ),
