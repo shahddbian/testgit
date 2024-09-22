@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:todoapp/firsbaseutils.dart';
 import '../model/task.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class listprovider extends ChangeNotifier {
   List<Task> tasklist = [];
-  var selectdate = DateTime.now();
+  DateTime selectdate = DateTime.now();
 
   Future<void> getAllTasksfromFire(String uId) async {
     var qSnapshot = await firebaseUtils.getTaskCollection(uId).get();
@@ -32,6 +30,8 @@ class listprovider extends ChangeNotifier {
         break;
       }
     }
+
+    // تحديث المهمة في Firestore
     await firebaseUtils.editTaskFromFireStore(task, uId);
     await getAllTasksfromFire(uId);
     notifyListeners();

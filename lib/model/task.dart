@@ -17,7 +17,7 @@ class Task {
   Task.fromFireStore(Map<String, dynamic> data)
       : this(
           id: data['id'] as String,
-          title: data['title '] as String,
+          title: data['title'] as String,
           description: data['description'] as String,
           dateTime: DateTime.fromMillisecondsSinceEpoch(data['dateTime']),
           isDone: data['isDone'] as bool,
@@ -26,7 +26,7 @@ class Task {
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,
-      'title ': title,
+      'title': title,
       'description': description,
       'dateTime': dateTime.millisecondsSinceEpoch,
       'isDone': isDone,

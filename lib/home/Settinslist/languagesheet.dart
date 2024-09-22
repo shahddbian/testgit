@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todoapp/appcolors.dart';
 import 'package:todoapp/provider/appconfigprovider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'themesheet.dart';
 
 class Languagesheet extends StatefulWidget {
   @override
@@ -244,27 +245,33 @@ class _settingsTabState extends State<settingsTab> {
     );
   }
 
-  void showlanguagesheet(BuildContext context) {
+  void showthemesheet() {
     showModalBottomSheet(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: appcolors.primaryColor,
+          width: 2,
+        ),
       ),
       context: context,
-      builder: (BuildContext context) {
-        return Languagesheet();
-      },
+      builder: (context) => Themesheet(),
     );
   }
 
-  void showthemesheet() {
+  void showlanguagesheet(BuildContext context) {
     showModalBottomSheet(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: appcolors.primaryColor,
+          width: 2,
+        ),
       ),
       context: context,
-      builder: (BuildContext context) {
-        return themesheet();
-      },
+      builder: (context) => Languagesheet(),
     );
   }
 }

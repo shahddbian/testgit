@@ -13,19 +13,19 @@ class firebaseUtils {
             toFirestore: (task, options) => task.toFirestore());
   }
 
-  static Future<void> addTasktoFireStore(Task task, String uId) {
+  static Future<void> addTasktoFireStore(Task task, String uId) async {
     var taskCollection = getTaskCollection(uId);
     var taskDocRef = taskCollection.doc();
     task.id = taskDocRef.id;
-    return taskDocRef.set(task);
+    await taskDocRef.set(task);
+  }
+
+  static Future<void> editTaskFromFireStore(Task task, String uId) async {
+    await getTaskCollection(uId).doc(task.id).update(task.toFirestore());
   }
 
   static Future<void> deletetaskfromfire(Task task, String uId) {
     return getTaskCollection(uId).doc(task.id).delete();
-  }
-
-  static Future<void> editTaskFromFireStore(Task task, String uId) {
-    return getTaskCollection(uId).doc(task.id).update(task.toFirestore());
   }
 
   static CollectionReference<Myuser> getUserCollection() {
@@ -34,7 +34,7 @@ class firebaseUtils {
         .withConverter<Myuser>(
             fromFirestore: ((snapshot, options) =>
                 Myuser.Fromfirestore(snapshot.data()!)),
-            toFirestore: ((user, options) => user.toFireStore()));
+            toFirestore: ((user, options) => user.tofiesStore()));
   }
 
   static Future<void> addUsertofire(Myuser myuser) {

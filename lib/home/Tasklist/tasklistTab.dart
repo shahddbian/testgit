@@ -56,7 +56,7 @@ class _TasklistState extends State<Tasklist> {
                 ? Center(child: Text('No Tasks Added'))
                 : ListView.builder(
                     itemBuilder: (context, index) {
-                      return tasklistitem(task: listProvider.tasklist[index]);
+                      return TaskListItem(task: listProvider.tasklist[index]);
                     },
                     itemCount: listProvider.tasklist.length,
                   ),

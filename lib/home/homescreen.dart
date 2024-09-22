@@ -26,6 +26,11 @@ class _homescreenState extends State<homescreen> {
     var listProvider = Provider.of<listprovider>(context);
     var theme = Theme.of(context);
 
+    // التحكم في لون الـ NavigationBar بناءً على الثيم
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: theme.bottomAppBarColor,
+    ));
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.15,
@@ -45,10 +50,7 @@ class _homescreenState extends State<homescreen> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: theme.bottomAppBarTheme.color ??
-            (theme.brightness == Brightness.dark
-                ? appcolors.darkboxColor
-                : appcolors.backlightColor),
+        color: theme.bottomAppBarTheme.color,
         shape: CircularNotchedRectangle(),
         notchMargin: 10,
         child: BottomNavigationBar(
@@ -62,13 +64,11 @@ class _homescreenState extends State<homescreen> {
           },
           items: [
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/images/icon_list.png')),
-              label: AppLocalizations.of(context)!.task_list,
-            ),
+                icon: ImageIcon(AssetImage('assets/images/icon_list.png')),
+                label: AppLocalizations.of(context)!.task_list),
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/images/icon_settings.png')),
-              label: AppLocalizations.of(context)!.settings,
-            ),
+                icon: ImageIcon(AssetImage('assets/images/icon_settings.png')),
+                label: AppLocalizations.of(context)!.settings),
           ],
         ),
       ),

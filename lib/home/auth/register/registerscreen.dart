@@ -6,7 +6,6 @@ import 'package:todoapp/firsbaseutils.dart';
 import 'package:todoapp/home/auth/costumTextform.dart';
 import 'package:todoapp/home/homescreen.dart';
 import 'package:todoapp/model/dataClass.dart';
-
 import '../../../provider/userprovider.dart';
 
 class registerscreen extends StatelessWidget {

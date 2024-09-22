@@ -10,9 +10,9 @@ class Myuser {
 
   Myuser.Fromfirestore(Map<String, dynamic> data)
       : this(
-            id: data['id'] as String, name: data['name'], email: data['email']);
+      id: data['id'] as String, name: data['name'], email: data['email']);
 
-  Map<String, dynamic> toFireStore() {
+  Map<String, dynamic> tofiesStore() {
     return {'id': id, 'email': email, 'name': name};
   }
 }
